@@ -1,0 +1,6 @@
+{
+  "name": "Conway's Game of Life",
+  "tagline": "",
+  "body": "# Conway's Game of Life\r\nImplemetation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life) using React. \r\nPlay it [here](http://www.yifeihu.me/game-of-life).\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
