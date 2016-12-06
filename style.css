@@ -1,0 +1,21 @@
+.square-alive {
+	background: #000;
+	border: 1px solid #000;
+	float: left;
+	height:	10px;
+	width: 10px;
+}
+
+.square-dead {
+	background: #fff;
+	border: 1px solid #000;
+	float: left;
+	height:	10px;
+	width: 10px;
+}
+
+.grid-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}

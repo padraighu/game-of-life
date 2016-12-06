@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Game of Life</title>
+	<script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+	<script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<div id="container"></div>
+	<script type="text/babel">
+		class Grid extends React.Component {
+			constructor(props) {
+				super();
+
+			    let initialStatus = [];
+			    let initialRow = [];
+		    	for (let i = 0; i < props.rowNum; i++) {
+		    		for (let j = 0; j < props.colNum; j++) {
+		    			initialRow.push(Math.random() >= 0.66 ? true : false);
+		    		}
+		    		initialStatus.push(initialRow);
+		    		initialRow = [];
+		    	}
+				this.state = { 
+					status: initialStatus, 
+					oldStatus: [],
+					playing: false
+				};
+
+			    setInterval(() => {
+			    	if (this.state.playing) {
+				    	this.setState({ oldStatus: this.state.status });
+				    	let newStatus = [];
+				    	let newRow = [];
+				    	for (let i = 0; i < this.props.rowNum; i++) {
+				    		for (let j = 0; j < this.props.colNum; j++) {
+				    			let aliveNbrCount = this.countAliveNbrs(i, j);
+				    			if (this.state.status[i][j]) {
+				    				if (aliveNbrCount < 2 || aliveNbrCount > 3) {
+				    					newRow.push(false); 
+				    				} else {
+				    					newRow.push(true);
+				    				}
+				    			} else {
+				    				if (aliveNbrCount == 3) {
+										newRow.push(true);
+				    				} else {
+										newRow.push(false); 
+				    				}
+				    			}
+				    		}
+				    		newStatus.push(newRow);
+				    		newRow = [];
+				    	}
+	  					this.setState({ status:  newStatus });
+					}
+				}, 100);
+			}
+
+			render() {
+				let matrix = [];
+				let row = [];
+				for (let i = 0; i < this.props.rowNum; i++) {
+					for (let j = 0; j < this.props.colNum; j++) {
+						row.push(this.state.status[i][j] 
+							? <button className="square-alive" /> 
+							: <button className="square-dead" onClick={() => {
+								let newStatus = this.state.status;
+								newStatus[i][j] = true
+								this.setState({ status: newStatus })
+							}}/>);
+					}
+					matrix.push(<div className="grid-row">{row}</div>);
+					row = [];
+				}
+				return (
+					<div className="grid">
+					{matrix}
+					<button onClick={() => this.setState({ playing: true })}>Start</button>
+					<button onClick={() => this.setState({ playing: false })}>Pause</button>
+					</div>
+				);
+			}
+
+			countAliveNbrs(i, j) {
+				let aliveNbrCount = 0;
+    			let upValid = i - 1 > -1;
+    			let downValid = i + 1 < this.props.rowNum;
+    			let leftValid = j - 1 > -1;
+    			let rightValid = j + 1 < this.props.colNum;
+    			if (upValid) {
+    				let row = i - 1;
+    				if (leftValid) {
+    					var col = j - 1;
+    				} else {
+    					var col = j;
+    				}
+    				if (rightValid) {
+    					var maxCol = j + 1;
+    				} else {
+    					var maxCol = j;
+    				}
+    				for (col; col <= maxCol; col++) {
+    					if (this.state.status[row][col]) {
+    						aliveNbrCount++;
+    					}
+    				}
+    			}
+    			if (downValid) {
+    				let row = i + 1;
+    				if (leftValid) {
+    					var col = j - 1;
+    				} else {
+    					var col = j;
+    				}
+    				if (rightValid) {
+    					var maxCol = j + 1;
+    				} else {
+    					var maxCol = j;
+    				}
+    				for (col; col <= maxCol; col++) {
+    					if (this.state.status[row][col]) {
+    						aliveNbrCount++;
+    					}
+    				}	
+    			}
+    			if (leftValid) {
+    				if (this.state.status[i][j - 1]) {
+    					aliveNbrCount++;
+    				}
+    			}
+    			if (rightValid) {
+    				if (this.state.status[i][j + 1]) {
+						aliveNbrCount++;
+    				}
+    			}
+    			return aliveNbrCount;
+			}
+ 		}
+		ReactDOM.render(<Grid rowNum="50" colNum="50" />, document.getElementById("container"));
+	</script>
+</body>
+</html>
